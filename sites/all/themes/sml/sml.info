@@ -1,0 +1,15 @@
+name = Silver Media Ltd. theme
+core = 7.x
+base theme = twitter_bootstrap
+
+regions[header]         = 'Top Bar'
+regions[highlighted]    = 'Highlighted'
+regions[help]           = 'Help'
+regions[content]        = 'Content'
+regions[sidebar_first]  = 'Primary'
+regions[sidebar_second] = 'Secondary'
+regions[footer]         = 'Footer'
+
+stylesheets[all][]      = 'css/style.css'
+
+scripts[]               = 'js/theme.js'

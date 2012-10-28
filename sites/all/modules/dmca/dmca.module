@@ -1,0 +1,117 @@
+<?php
+
+function dmca_menu()
+{
+    $items['dmca'] = array(
+        'title' => 'DMCA report form',
+        'page callback' => 'dmca_page',
+        'access arguments' => array('access content'),
+        'type' => MENU_NORMAL_ITEM,
+    );
+    $items['dmca/form'] = array(
+        'title' => 'DMCA report form',
+        'page callback' => 'dmca_page',
+        'type' => MENU_DEFAULT_LOCAL_TASK,
+        'weight' => -10,
+    );
+    $items['dmca/learn-more'] = array(
+        'title' => 'About Copyright',
+        'page callback' => 'dmca_learn_more_page',
+        'access arguments' => array('access content'),
+        'type' => MENU_LOCAL_TASK,
+    );
+    return $items;
+}
+
+function dmca_page()
+{
+    return drupal_get_form('dmca_form');
+}
+
+function dmca_form()
+{
+    $form['what'] = array(
+        '#type' => 'radios',
+        '#title' => t("What right is being violated or infringed?"),
+        '#options' => array(
+            'copyright' => t("Copyright"),
+            'trademark' => t("Trademark"),
+            'privacy' => t("Privacy - a content in which I appear"),
+            'other' => t("Other"),
+        ),
+    );
+    $form['copyright_info'] = array(
+        '#type' => 'container',
+        '#states' => array(
+            'visible' => array(
+                ':input[name="what"]' => array('value' => 'copyright'),
+            ),
+        ),
+        '#children' => '<p>' . t("Under the laws of most countries, copyright is the legal right that protects original works of authorship, such as books, music, film and art. In most countries, copyright does not protect facts, ideas, systems or methods of operation. Some of these may be protected by other rights. Generally, copyright does not protect facts and ideas, but it may protect the original words or images that express that idea.") . '</p>' .
+            '<p>' . t("However, copyright does not protect all expressions. As explained by the U.S. Copyright Office, \"copyright does not protect names, titles, slogans, or short phrases. In some cases, these things may be protected as trademarks.\"'") . '</p>' .
+            '<br/>' .
+            l(t("Learn more about copyright"), 'dmca/learn-more'),
+    );
+
+    $form['continue_container'] = array(
+        '#type' => 'container',
+        '#states' => array(
+            'visible' => array(
+                ':input[name="what"]' => array('!value' => FALSE),
+            ),
+        ),
+    );
+    $form['continue_container']['continue'] = array(
+        '#type' => 'checkbox',
+        '#title' => t("Continue with your copyright report"),
+    );
+
+    $form['copyright_container']['more'] = array(
+        '#type' => 'container',
+        '#description' => t("You can submit multiple links."),
+        '#states' => array(
+            'visible' => array(
+                ':input[name="what"]' => array('value' => 'copyright'),
+                ':input[name="continue"]' => array('checked' => TRUE),
+            ),
+        ),
+    );
+    $form['copyright_container']['more']['urls'] = array(
+        '#type' => 'textarea',
+        '#title' => t("Please identify the content on some of our sites that you allege is violating or infringing your rights. Please provide links (URLs) to the specific content wherever possible."),
+    );
+    $form['copyright_container']['more']['description'] = array(
+        '#type' => 'textarea',
+        '#title' => t("Describe or identify your copyrighted work."),
+        '#description' => t("1,000 character limit"),
+    );
+
+    $form['contact_container'] = array(
+        '#type' => 'container',
+        '#states' => array(
+            'invisible' => array(
+                ':input[name="what"]' => array('!value' => TRUE),
+                ':input[name="continue"]' => array('checked' => FALSE),
+            ),
+        ),
+    );
+    $form['contact_container']['contact'] = array(
+        '#type' => 'radios',
+        '#title' => t("Contact Information"),
+        '#options' => array(
+            'owner' => t("I am the rights holder, reporting on my own behalf."),
+            'representative' => t("I am reporting on behalf of the rights holder, as their authorized representative.")
+        ),
+    );
+    $form['contact_container']['owner_container'] = array(
+        '#type' => 'container',
+        '#states' => array(),
+    );
+    return $form;
+}
+
+function dmca_learn_more_page()
+{
+    return node_show(node_load(1));
+}
+
